@@ -27,7 +27,9 @@ def deal_for(snipet, variables):
     start_idx = snipet.find("{")
     #cs_str = snipet[:start_idx].replace(" ", "").replace("\n", "")
     cs_str = snipet[:start_idx].replace("\n", "")
-    snipet = snipet[start_idx + 1:].rstrip("}")
+    snipet = snipet[start_idx + 1:]
+    pos = list(re.finditer(r"}[^}]+$", snipet))[0].start()
+    snipet = snipet[:pos]
 
     if "eval" in cs_str:
         cs = eval(cs_str)
@@ -121,7 +123,7 @@ def deal_for(snipet, variables):
             raise Exception("Illegal Semantic")
         ret += snipet
 
-    return ret.replace("}", "")
+    return ret
 
 
 def deal_snipet(snipet, variables):
@@ -141,7 +143,7 @@ def deal_line_code(code, variables):
         return
 
 
-s = open("note", "r").read()
+s = open("note.v", "r").read()
 
 tmp = ""
 result = ""
