@@ -1,10 +1,17 @@
 # coding:utf-8
 
 from PIL import Image
+from PIL import ImageFont
+from PIL import Image
+from PIL import ImageDraw
+import numpy
+
+
 import sys
 
+
 template = """
-if(row == %s && col == %s) begin
+if(row >= %s && row < %s && col >= %s && col < %s) begin
     red <= 1'b0;
     green <= 1'b0;
     blue <= 1'b0;
@@ -29,19 +36,27 @@ def int2verilogInt(x, bit=32):
 assert int2verilogInt(10, 10) == "10'd10"
 
 
-def translate(filename, definition=default_rect):
+def translate(filename, definition=default_rect, rate=4):
     # imageを開き、definitionにあったサイズに変換
     # さらに二値になるように変換
-    data = Image(filename) # koko
+    im = Image.open(filename)
+    im = im.convert("L")
+    im = im.resize((definition.width, definition.height), Image.LANCZOS)
+    imgArray = numpy.asarray(im).T
+    print(imgArray.shape)
+    im.show()
 
     x = definition.x
     y = definition.y
     result = ""
     for px in range(definition.width):
         for py in range(definition.height):
-            col = int2verilogInt(x + px, 10)
-            row = int2verilogInt(y + py, 10)
-            result += template % (row, col)
+            if imgArray[px, py] < 100:
+                col = int2verilogInt(y + rate * px, 10)
+                row = int2verilogInt(x + rate * py, 10)
+                col2 = int2verilogInt(y + rate * px + 10 , 10)
+                row2 = int2verilogInt(x + rate * py + 10, 10)
+                result += template % (row, row2, col, col2)
     return result
 
 
@@ -61,8 +76,11 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("python %s [filename]" % sys.argv[0])
     elif len(sys.argv) == 2:
-        translate(sys.argv[1])
+        ret = translate(sys.argv[1])
+        with open("result", "w") as f:
+            f.write(ret)
     else:
         filename = sys.argv[1]
         definition = parse_def(sys.argv[2])
-        translate(filename, definition)
+        with open("result", "w") as f:
+            f.write(translate(filename, definition))

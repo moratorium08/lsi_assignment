@@ -3,6 +3,16 @@
 import re
 
 
+def data2str(data):
+    if isinstance(data, int):
+        return "%d'd%d" % (len(bin(data)) - 2, data)
+    if isinstance(data, bool):
+        return "%d'd%d" % (1, 1 if data else 0)
+    if isinstance(data, str):
+        return data
+    raise Exception("Unsupported type")
+
+
 def deal_for(snipet, variables):
     snipet = snipet.lstrip(" ").lstrip("\n")
     if snipet[:3] != "for":
@@ -15,10 +25,13 @@ def deal_for(snipet, variables):
     snipet = snipet[v_idx + 2:]
 
     start_idx = snipet.find("{")
-    cs_str = snipet[:start_idx].replace(" ", "").replace("\n", "")
-    snipet = snipet[start_idx + 1:].replace("}", "")
+    #cs_str = snipet[:start_idx].replace(" ", "").replace("\n", "")
+    cs_str = snipet[:start_idx].replace("\n", "")
+    snipet = snipet[start_idx + 1:].rstrip("}")
 
-    if len(vs) == 1:
+    if "eval" in cs_str:
+        cs = eval(cs_str)
+    elif len(vs) == 1:
         cs = cs_str.split(",")
         if len(cs) == 0:
             raise Exception("parse error! Illegal for expression")
@@ -44,16 +57,71 @@ def deal_for(snipet, variables):
                 raise Exception("parse error! Illegal for expression")
 
             cs.append(tmp)
+    snipet_origin = snipet
+    ret = ""
     for local in cs:
-        assert len(local) == len(vs)
-        local_variables = dict(zip(vs, local))
+        snipet = snipet_origin
+        local_variables = dict(zip(vs, list(local)))
         for closure in re.findall(r"{{.+?}}", snipet):
-            pass
+            m = re.match(r"{{ *([A-Za-z][A-Za-z0-9]*) *}}", closure)
+            if m:
+                name = m.group(1)
+                if name in local_variables:
+                    snipet = snipet.replace(closure,
+                            data2str(local_variables[name]))
+                elif name in variables:
+                    snipet = snipet.replace(closure,
+                            data2str(variables[name]))
+                else:
+                    raise Exception("NO such variable %s" % name)
+                continue
+            m = re.match(r"{{ *([A-Za-z][A-Za-z0-9]*) *\+ *([A-Za-z][A-Za-z0-9]*) *}}", closure)
+            if m:
+                val1 = m.group(1)
+                val2 = m.group(2)
+                if val1 in local_variables:
+                    val1 = local_variables[val1]
+                elif val1 in variables:
+                    val1 = variables[val1]
+                else:
+                    raise Exception("NO such variable %s" % val1)
+                if val2 in local_variables:
+                    val2 = local_variables[val2]
+                elif val2 in variables:
+                    val2 = variables[val2]
+                else:
+                    raise Exception("NO such variable %s" % val2)
+                snipet = snipet.replace(closure, data2str(val1 + val2))
+                continue
+            m = re.match(r"{{ *([A-Za-z][A-Za-z0-9]*) *\+ *([A-Za-z][A-Za-z0-9]*) *\+ *([A-Za-z][A-Za-z0-9]*) *}}", closure)
+            if m:
+                val1 = m.group(1)
+                val2 = m.group(2)
+                val3 = m.group(3)
+                if val1 in local_variables:
+                    val1 = local_variables[val1]
+                elif val1 in variables:
+                    val1 = variables[val1]
+                else:
+                    raise Exception("NO such variable %s" % val1)
+                if val2 in local_variables:
+                    val2 = local_variables[val2]
+                elif val2 in variables:
+                    val2 = variables[val2]
+                else:
+                    raise Exception("NO such variable %s" % val2)
+                if val3 in local_variables:
+                    val3 = local_variables[val3]
+                elif val3 in variables:
+                    val3 = variables[val3]
+                else:
+                    raise Exception("NO such variable %s" % val3)
+                snipet = snipet.replace(closure, data2str(val1 + val2 + val3))
+                continue
+            raise Exception("Illegal Semantic")
+        ret += snipet
 
-
-
-    print(vs, cs)
-    return "TEST"
+    return ret.replace("}", "")
 
 
 def deal_snipet(snipet, variables):
@@ -84,16 +152,17 @@ for line in s.split("\n"):
         if m:
             line_code = m.group(1)
             deal_line_code(line_code, variables)
-            print(variables)
         elif "[[" in line:
-            tmp += line
+            tmp += line + "\n"
         else:
-            result += line
+            result += line + "\n"
     else:
-        tmp += line
+        tmp += line + "\n"
         if "]]" in line:
             result += deal_snipet(tmp, variables)
             tmp = ""
+
+print(result)
 
 
 if __name__ == '__main__':
