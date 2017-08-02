@@ -1,6 +1,6 @@
 # coding:utf-8
-
 import re
+import image_generator as ig
 
 
 def data2str(data):
@@ -144,6 +144,11 @@ def deal_line_code(code, variables):
         variables[m.group(1)] = bool(m.group(2))
         return
 
+    m = re.match(r"^!! *([A-Za-z0-9.]+) *: *(.+?) *$", code)
+    if m:
+        r = ig.Rect(*list(map(int, m.group(2).split(","))))
+        return ig.translate(m.group(1), r)
+
 
 s = open("note.v", "r").read()
 
@@ -155,7 +160,9 @@ for line in s.split("\n"):
         m = re.match(r"^ *\[\[(.+)\]\] *$", line)
         if m:
             line_code = m.group(1)
-            deal_line_code(line_code, variables)
+            s = deal_line_code(line_code, variables)
+            if s is not None:
+                result += s
         elif "[[" in line:
             tmp += line + "\n"
         else:

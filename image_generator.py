@@ -43,8 +43,7 @@ def translate(filename, definition=default_rect, rate=4):
     im = im.convert("L")
     im = im.resize((definition.width, definition.height), Image.LANCZOS)
     imgArray = numpy.asarray(im).T
-    print(imgArray.shape)
-    im.show()
+    # im.show()
 
     x = definition.x
     y = definition.y
