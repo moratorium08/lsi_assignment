@@ -149,33 +149,38 @@ def deal_line_code(code, variables):
         r = ig.Rect(*list(map(int, m.group(2).split(","))))
         return ig.translate(m.group(1), r)
 
+    m = re.match(r"^import *([A-Za-z0-9.]+) *$", code)
+    if m:
+        with open(m.group(1)) as f:
+            s = f.read()
+            return parse(s)
 
-s = open("note.v", "r").read()
 
-tmp = ""
-result = ""
-variables = {}
-for line in s.split("\n"):
-    if len(tmp) == 0:
-        m = re.match(r"^ *\[\[(.+)\]\] *$", line)
-        if m:
-            line_code = m.group(1)
-            s = deal_line_code(line_code, variables)
-            if s is not None:
-                result += s
-        elif "[[" in line:
-            tmp += line + "\n"
+def parse(s):
+    tmp = ""
+    result = ""
+    variables = {}
+    for line in s.split("\n"):
+        if len(tmp) == 0:
+            m = re.match(r"^ *\[\[(.+)\]\] *$", line)
+            if m:
+                line_code = m.group(1)
+                s = deal_line_code(line_code, variables)
+                if s is not None:
+                    result += s
+            elif "[[" in line:
+                tmp += line + "\n"
+            else:
+                result += line + "\n"
         else:
-            result += line + "\n"
-    else:
-        tmp += line + "\n"
-        if "]]" in line:
-            result += deal_snipet(tmp, variables)
-            tmp = ""
-
-print(result)
+            tmp += line + "\n"
+            if "]]" in line:
+                result += deal_snipet(tmp, variables)
+                tmp = ""
+    return result
 
 
 if __name__ == '__main__':
-    pass
-
+    s = open("note.v", "r").read()
+    result = parse(s)
+    print(result)
