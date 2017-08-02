@@ -57,7 +57,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
 
             // maru no hyouji
             [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
-            if (board{{x}}{{y}} == 2'b1) begin
+            if (board{{x}}{{y}} == 2'b01) begin
                 if (((col - `CENTER{{x}}{{y}}x) * (col - `CENTER{{x}}{{y}}x) +
                     (row - `CENTER{{x}}{{y}}y) * (row - `CENTER{{x}}{{y}}y)) > 1600 &&
                     ((col - `CENTER{{x}}{{y}}x) * (col - `CENTER{{x}}{{y}}x) +
@@ -67,23 +67,37 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
             end
             }]]
             // batsu no hyouji
-            [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
+            [[for x, y, X, c1, Y, c2 in eval("[(str(x), str(y), 45 + 100 * x, 185 + 100 * (x + y), 45, x * 100 - y*100
+            [[for x, y, X, c1, Y, c2 in eval("[('0', '0', 45, 185, 45, 0), ('0', '1', 145, 285, 45, 100), ('0', '2', 245, 385, 45, 200)]"){
             if (board{{x}}{{y}} == 2'b10) begin
-                if (((col - `CENTER{{x}}{{y}}x) * (col - `CENTER{{x}}{{y}}x) +
-                    (row - `CENTER{{x}}{{y}}y) * (row - `CENTER{{x}}{{y}}y)) > 1600 &&
-                    ((col - `CENTER{{x}}{{y}}x) * (col - `CENTER{{x}}{{y}}x) +
-                    (row - `CENTER{{x}}{{y}}y) * (row - `CENTER{{x}}{{y}}y)) < 2000) begin
-                    {red, green, blue} = 3'b100;
+                if(( col + row ) < ({{c1}} + 10'd10) && (col + row) > {{c1}} && col > ({{X}} + 10'd5)  && col < ({{X}} + 10'd90)) begin
+                    {red, green, blue} = 3'b000;
+                end
+                if((row - col + {{c2}}) < 10 && (col - row + {{c2}}) > 10 && col > ({{X}} + 10'd5) && col < ({{X}} + 10'd90)) begin
+                    {red, green, blue} = 3'b000;
                 end
             end
             }]]
-
-            if(( col + row ) < 195 && (col + row) > 185 && col > 50 && col < 135) begin
-                {red, green, blue} = 3'b000;
+            [[for x, y, X, c1, Y, c2 in eval("[('1', '0', 45, 285, 45, -100), ('1', '1', 145, 385, 45, 0), ('1', '2', 245, 485, 45, 100)]"){
+            if (board{{x}}{{y}} == 2'b10) begin
+                if(( col + row ) < ({{c1}} + 10'd10) && (col + row) > {{c1}} && col > ({{X}} + 10'd5)  && col < ({{X}} + 10'd90)) begin
+                    {red, green, blue} = 3'b000;
+                end
+                if((row - col + {{c2}}) < 10 && (col - row + {{c2}}) > 10 && col > ({{X}} + 10'd5) && col < ({{X}} + 10'd90)) begin
+                    {red, green, blue} = 3'b000;
+                end
             end
-            if((row - col) < 10 && (col - row) > 10 && col > 50 && col < 135) begin
-                {red, green, blue} = 3'b000;
+            }]]
+            [[for x, y, X, c1, Y, c2 in eval("[('2', '0', 45, 385, 45, -200), ('2', '1', 145, 485, 45, -100), ('2', '2', 245, 585, 45, 0)]"){
+            if (board{{x}}{{y}} == 2'b10) begin
+                if(( col + row ) < ({{c1}} + 10'd10) && (col + row) > {{c1}} && col > ({{X}} + 10'd5)  && col < ({{X}} + 10'd90)) begin
+                    {red, green, blue} = 3'b000;
+                end
+                if((row - col + {{c2}}) < 10 && (col - row + {{c2}}) > 10 && col > ({{X}} + 10'd5) && col < ({{X}} + 10'd90)) begin
+                    {red, green, blue} = 3'b000;
+                end
             end
+            }]]
         end
     end
 
@@ -96,19 +110,25 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
         end
         else begin
            if (player_state == 1'b0) begin
-                if(!board_but00 && board00 == 0) board00 = 2'b1;
+                if(!board_but00 && board00 == 0) begin
+                    board00 <= 2'b1;
+                    player_state <= 1'b1;
+                end
                 [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
-                    else if(!board_but{{x}}{{y}} && board{{x}}{{y}} == 0) begin
+                    else if(!board_but{{x}}{{y}} && board{{x}}{{y}} == 2'b0) begin
                         board{{x}}{{y}} <= 2'b1;
                         player_state <= 1'b1;
                     end
                 }]]
             end
             else begin
-                if(!board_but00 && board00 == 0) board00 = 2'b1;
+                if(!board_but00 && board00 == 0) begin
+                    board00 <= 2'b10;
+                    player_state <= 1'b0;
+                end
                 [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
-                    else if(!board_but{{x}}{{y}} && board{{x}}{{y}} == 0) begin
-                        board{{x}}{{y}} = 2'b1;
+                    else if(!board_but{{x}}{{y}} && board{{x}}{{y}} == 2'b0) begin
+                        board{{x}}{{y}} <= 2'b10;
                         player_state <= 1'b0;
                     end
                 }]]

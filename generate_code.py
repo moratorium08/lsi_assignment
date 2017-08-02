@@ -5,6 +5,8 @@ import re
 
 def data2str(data):
     if isinstance(data, int):
+        if data < 0:
+            return "0 - %d'd%d" % (len(bin(data)) - 2, -data)
         return "%d'd%d" % (len(bin(data)) - 2, data)
     if isinstance(data, bool):
         return "%d'd%d" % (1, 1 if data else 0)
