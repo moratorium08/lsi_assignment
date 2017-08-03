@@ -144,17 +144,20 @@ def deal_line_code(code, variables):
         variables[m.group(1)] = bool(m.group(2))
         return
 
-    m = re.match(r"^!! *([A-Za-z0-9._]+) *: *(.+?) *$", code)
+    m = re.match(r"^!! *([A-Za-z0-9._]+) *: *(.+?) *(: *(.+?) *)? *$", code)
     if m:
         r = ig.Rect(*list(map(int, m.group(2).split(","))))
-        return ig.translate(m.group(1), r)
+        try:
+            rate = int(m.group(3))
+        except:
+            rate = 4
+        return ig.translate(m.group(1), r, rate)
 
     m = re.match(r"^import *([A-Za-z0-9_.]+) *$", code)
     if m:
         with open(m.group(1)) as f:
             s = f.read()
             return parse(s)
-
 
 def parse(s):
     tmp = ""
