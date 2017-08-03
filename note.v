@@ -10,6 +10,10 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     reg red, green, blue;
     reg player_state;
     reg [2:0] game_state;
+    reg [2:0] game_config;
+    reg [3:0] random_number;
+
+    reg late;
 
     reg [1:0] board00, board01, board02;
     reg [1:0] board10, board11, board12;
@@ -42,11 +46,19 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                 board{{x}}{{y}} <= 2'b00;
             }]]
             player_state = 1'b0;
-            game_state = 2'b0;
+            game_state = 3'b0;
             complete_button_action <= 1'b0;
+            game_config <= 3'b1;
+            random_number <= 4'b0;
+            late <= 1'b0;
         end
         else begin
             {red, green, blue} = 3'b111;
+            random_number <= random_number + 4'b1;
+            if (random_number > 4'd8) begin
+                random_number <= 4'b0;
+            end
+            [[import board.v]]
 
             if (game_state == 2'b0) begin
                 game_state <= 2'b1;
@@ -55,7 +67,6 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                 complete_button_action <= 1'b0;
                 [[import button_action.v]]
                 if(complete_button_action == 1'b0) begin
-                    [[import board.v]]
                     [[import judge_board.v]]
                 end
                 else begin

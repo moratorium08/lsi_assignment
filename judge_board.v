@@ -1,6 +1,8 @@
 
+if (1!=1) begin
+end
 [[for x in eval("[str(x) for x in range(3)]") {
-    if (board{{x}}0 == 2'b01 && board{{x}}1 == 2'b01 && board{{x}}2 == 2'b01) begin
+    else if (board{{x}}0 == 2'b01 && board{{x}}1 == 2'b01 && board{{x}}2 == 2'b01) begin
         game_state <= 2'b10;
     end else if (board{{x}}0 == 2'b10 && board{{x}}1 == 2'b10 && board{{x}}2 == 2'b10) begin
         game_state <= 2'b11;
@@ -10,7 +12,7 @@
         game_state <= 2'b11;
     end
 }]]
-if (board00 == board11  && board11 == board22) begin
+else if (board00 == board11  && board11 == board22) begin
     if (board00 == 2'b01) begin
         game_state <= 2'b10;
     end else if (board00 == 2'b10) begin
@@ -22,8 +24,9 @@ end else if (board20 == board11  && board11 == board02) begin
     end else if (board11 == 2'b10) begin
         game_state <= 2'b11;
     end
-end
-if (game_state == 2'b1) begin
+end else if (game_state == 2'b1 && late == 1'b0) begin
+    late <= 1'b1;
+end else if (game_state == 2'b1 && late == 1'b1) begin
     if (1==1
     [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
         && board{{x}}{{y}} != 2'b00
