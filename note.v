@@ -47,19 +47,20 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
         end
         else begin
             {red, green, blue} = 3'b111;
-            [[!! shinchoku.png : 100, 100, 100, 100 : 2]]
 
             if (game_state == 2'b0) begin
+                game_state <= 2'b1;
+            end
+            else if (game_state == 2'b1) begin
                 complete_button_action <= 1'b0;
                 [[import button_action.v]]
-
-                // avoid non-defined value
                 if(complete_button_action == 1'b0) begin
                     [[import board.v]]
+                    [[import judge_board.v]]
                 end
                 else begin
                     [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
-                    if ((board{{x}}{{y}} != 2'b00) &&
+                        if ((board{{x}}{{y}} != 2'b00) &&
                            (board{{x}}{{y}} != 2'b01) &&
                            (board{{x}}{{y}} != 2'b10) &&
                            (board{{x}}{{y}} != 2'b11)) begin
@@ -68,6 +69,13 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                         end
                     }]]
                 end
+                //!! shinchoku.png : 100, 100, 200, 200 : 1]]
+            end else if (game_state == 2'b10) begin
+                [[!! win.png : 400, 400, 100, 40 : 1]]
+            end else if (game_state == 2'b11) begin
+                [[!! lose.png : 400, 400, 100, 40 : 1]]
+            end else if (game_state == 3'b100) begin
+                [[!! draw.png : 400, 400, 100, 40 : 1]]
             end
         end
     end

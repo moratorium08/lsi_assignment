@@ -51,8 +51,8 @@ def translate(filename, definition=default_rect, rate=4):
             if imgArray[px, py] < 100:
                 col = int2verilogInt(y + rate * px, 10)
                 row = int2verilogInt(x + rate * py, 10)
-                col2 = int2verilogInt(y + rate * px + 10 , 10)
-                row2 = int2verilogInt(x + rate * py + 10, 10)
+                col2 = int2verilogInt(y + rate * px + rate , 10)
+                row2 = int2verilogInt(x + rate * py + rate, 10)
                 result += template % (row, row2, col, col2)
     return result
 
