@@ -36,17 +36,21 @@ def deal_for(snipet, variables):
     snipet = snipet[:pos]
 
     if "eval" in cs_str:
-        cs = eval(cs_str)
+        try:
+            cs = eval(cs_str)
+        except:
+            print(cs_str)
+            raise
     elif len(vs) == 1:
-        cs = cs_str.split(",")
+        cs = cs_str.replace(" ","").split(",")
         if len(cs) == 0:
             raise Exception("parse error! Illegal for expression")
-
         if isinstance(cs[0], int):
             cs = map(int, cs)
         elif isinstance(cs[0], bool):
             cs = map(int, cs)
         else:
+            print(cs)
             raise Exception("parse error! Illegal for expression")
     else:
         l = [x[1:-1] for x in re.findall(r"\(.+?\)", cs_str)]
@@ -67,7 +71,12 @@ def deal_for(snipet, variables):
     ret = ""
     for local in cs:
         snipet = snipet_origin
-        local_variables = dict(zip(vs, list(local)))
+        try:
+            local_variables = dict(zip(vs, list(local)))
+        except:
+            print(snipet)
+            print(local)
+            raise
         for closure in re.findall(r"{{.+?}}", snipet):
             m = re.match(r"{{ *([A-Za-z][A-Za-z0-9]*) *}}", closure)
             if m:
@@ -79,6 +88,7 @@ def deal_for(snipet, variables):
                     snipet = snipet.replace(closure,
                             data2str(variables[name]))
                 else:
+                    print(snipet)
                     raise Exception("NO such variable %s" % name)
                 continue
             m = re.match(r"{{ *([A-Za-z][A-Za-z0-9]*) *\+ *([A-Za-z][A-Za-z0-9]*) *}}", closure)

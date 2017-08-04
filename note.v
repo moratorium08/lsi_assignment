@@ -15,21 +15,17 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     reg [2:0] select_button;
 
     reg late;
+    reg late2;
 
-    [[for x in eval("[str(x) for x in range(9)]") {
-        reg [9:0] put{{x}};
-    }]]
-    [[for x in eval("[str(x) for x in range(9)]") {
-        reg [9:0] draw_put{{x}};
-    }]]
+    reg [9:0] put[9];
+    reg [9:0] draw_put[9];
 
     reg [8:0] cnt;
     reg [8:0] see;
     reg [4:0] my_turn;
     reg [8:0] current_winner;
     reg [8:0] next_put;
-
-    reg ret_flag;
+    reg [8:0] winner;
 
 
     reg [2:0] board00, board01, board02;
@@ -59,6 +55,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     always @(posedge CLK or negedge RST) begin
         if(!RST) begin
             [[import initialize.v]]
+            late2 <= 0;
         end
         else begin
             {red, green, blue} = 3'b111;

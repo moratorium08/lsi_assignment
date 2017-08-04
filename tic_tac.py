@@ -138,7 +138,7 @@ class VerilogSimulator:
                 flag = False
                 for i in range(9):
                     if self.see == i and self.board[i] == 0:
-                        self.board[i] = self.my_turn + 2
+                        self.board[i] = self.my_turn
                         self.put[self.cnt] = i
                         self.my_turn ^= 0b11
                         self.cnt += 1
@@ -148,8 +148,8 @@ class VerilogSimulator:
                     self.see += 1
             # backward
             else:
+                self.board[self.put[self.cnt]] = 0
                 if self.current_winner == self.my_turn:
-                    self.board[self.put[self.cnt]] = 0
                     self.put[self.cnt] = 9
                     self.see = self.put[self.cnt - 1]
                     self.cnt -= 1
@@ -158,10 +158,8 @@ class VerilogSimulator:
                     self.current_winner = 8
                     self.draw_put[self.cnt] = self.put[self.cnt]
                     self.see = self.put[self.cnt] + 1
-                    self.board[self.put[self.cnt]] = 0
                     self.put[self.cnt] = 9
                 else:
-                    self.board[self.put[self.cnt]] = 0
                     self.see += 1
                     self.current_winner = 8
 
