@@ -2,12 +2,14 @@
 
 
 board = [0 for i in range(9)]
-#board[0] = 1
-#board[1] = 2
-#board[2] = 1
-#board[4] = 2
-#board[6] = 2
-#board[7] = 1
+"""
+board[0] = 2
+board[1] = 2
+board[2] = 1
+board[3] = 2
+board[5] = 1
+board[7] = 1
+"""
 player = 2
 
 def print_field():
@@ -70,7 +72,17 @@ class VerilogSimulator:
         self.put = [9 for i in range(9)]
         self.draw_put = [9 for i in range(9)]
         self.cnt = 0
-        self.current_winner = -1
+        self.current_winner = 8
+
+    def debug(self):
+        print("cnt:",self.cnt)
+        print("current_winner:", self.current_winner)
+        print("my turn:", self.my_turn)
+        print("see :", self.see)
+        print("put :",self.put)
+        print("draw_put:",self.draw_put)
+        print_board(self.board)
+        input()
 
     def search(self):
         while self.next_put == 9:
@@ -89,81 +101,69 @@ class VerilogSimulator:
         self.cnt = 0
         self.see = 0
         self.my_turn = 2
-        self.current_winner = -1
+        self.current_winner = 8
 
     def loop(self):
-        ret_flag = False
-        #print(self.cnt, self.current_winner, self.my_turn, self.see)
-        #print(self.draw_put)
-        #print_board(self.board)
-        #input()
-
-        if self.current_winner == -1:
-            #print(self.board, self.cnt)
-            flag = False
-            for i in range(9):
-                if flag:
-                    ret_flag = True
-                    break
-                if self.see == i and self.board[i] == 0:
-                    self.board[i] = self.my_turn + 2
-                    self.put[self.cnt] = i
-                    self.my_turn ^= 0b11
-                    self.cnt += 1
-                    self.see = 0
-                    flag = True
-        # backward
-        else:
-            #if self.cnt == -1:
-            #    self.next_put = self.put[0]
-            if self.current_winner == self.my_turn:
-                self.board[self.put[self.cnt]] = 0
-                self.put[self.cnt] = 9
-                self.cnt -= 1
-                # print(self.put)
-                self.see = self.put[self.cnt]
-                self.my_turn ^= 0b11
-                ret_flag = True
-            elif self.current_winner == 3:
-                self.current_winner = -1
-                self.draw_put[self.cnt] = self.put[self.cnt]
-                self.see = self.put[self.cnt]
-                print(self.put, self.cnt)
-                self.board[self.put[self.cnt]] = 0
-                self.put[self.cnt] = 9
-            else:
-                # self.cnt -= 1
-                # print(self.put, self.cnt)
-                self.board[self.put[self.cnt]] = 0
-                self.see += 1
-                self.current_winner = -1
-                ret_flag = True
-
-        if not ret_flag:
-            self.see += 1
-            if self.see > 8:
-                if self.draw_put[self.cnt] != 9:
-                    self.current_winner = 3
-                else:
-                    self.current_winner = self.my_turn ^ 0b11
-
-                self.put[self.cnt] = self.draw_put[self.cnt]
-                self.draw_put[self.cnt] = 9
-                self.cnt -= 1
-                if self.cnt == 0:
-                    if self.put[0] == 9:
-                        for i in range(9):
-                            if self.board[i] == 0:
-                                self.next_put = i
-                                break
-                    else:
-                        self.next_put = self.put[0]
-                self.my_turn ^= 0b11
+        # self.debug()
         w = check(self.board)
-        if w != 0:
+        if self.current_winner == 8 and w != 0:
             self.current_winner = w
             self.cnt -= 1
             self.my_turn ^= 0b11
+        elif self.current_winner == self.my_turn and self.cnt == 0:
+            self.next_put = self.put[0]
+        elif self.see > 8:
+            if self.draw_put[self.cnt] != 9:
+                self.current_winner = 3
+            else:
+                self.current_winner = self.my_turn ^ 0b11
+            self.put[self.cnt] = self.draw_put[self.cnt]
+            self.draw_put[self.cnt] = 9
+
+            if self.cnt == 0:
+                if self.put[0] == 9:
+                    for i in range(9):
+                        if self.board[i] == 0:
+                            self.next_put = i
+                            break
+                else:
+                    self.next_put = self.put[0]
+            else:
+                self.see = self.put[self.cnt - 1]
+                self.cnt -= 1
+                self.my_turn ^= 0b11
+        else:
+            if self.current_winner == 8:
+                #print(self.board, self.cnt)
+                flag = False
+                for i in range(9):
+                    if self.see == i and self.board[i] == 0:
+                        self.board[i] = self.my_turn + 2
+                        self.put[self.cnt] = i
+                        self.my_turn ^= 0b11
+                        self.cnt += 1
+                        self.see = 0
+                        flag = True
+                if not flag:
+                    self.see += 1
+            # backward
+            else:
+                if self.current_winner == self.my_turn:
+                    self.board[self.put[self.cnt]] = 0
+                    self.put[self.cnt] = 9
+                    self.see = self.put[self.cnt - 1]
+                    self.cnt -= 1
+                    self.my_turn ^= 0b11
+                elif self.current_winner == 3:
+                    self.current_winner = 8
+                    self.draw_put[self.cnt] = self.put[self.cnt]
+                    self.see = self.put[self.cnt] + 1
+                    self.board[self.put[self.cnt]] = 0
+                    self.put[self.cnt] = 9
+                else:
+                    self.board[self.put[self.cnt]] = 0
+                    self.see += 1
+                    self.current_winner = 8
 
 
 def dfs(l, turn):
