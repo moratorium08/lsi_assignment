@@ -16,9 +16,25 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
 
     reg late;
 
-    reg [1:0] board00, board01, board02;
-    reg [1:0] board10, board11, board12;
-    reg [1:0] board20, board21, board22;
+    [[for x in eval("[str(x) for x in range(9)]") {
+        reg [9:0] put{{x}};
+    }]]
+    [[for x in eval("[str(x) for x in range(9)]") {
+        reg [9:0] draw_put{{x}};
+    }]]
+
+    reg [8:0] cnt;
+    reg [8:0] see;
+    reg [4:0] my_turn;
+    reg [8:0] current_winner;
+    reg [8:0] next_put;
+
+    reg ret_flag;
+
+
+    reg [2:0] board00, board01, board02;
+    reg [2:0] board10, board11, board12;
+    reg [2:0] board20, board21, board22;
     reg complete_button_action;
 
     [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
@@ -75,11 +91,11 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                     end
                     //!! shinchoku.png : 100, 100, 200, 200 : 1]]
                 end else if (game_state == 2'b10) begin
-                    [[!! win.png : 400, 400, 100, 40 : 1]]
+                    //!! win.png : 400, 400, 100, 40 : 1]]
                 end else if (game_state == 2'b11) begin
-                    [[!! lose.png : 400, 400, 100, 40 : 1]]
+                    //!! lose.png : 400, 400, 100, 40 : 1]]
                 end else if (game_state == 3'b100) begin
-                    [[!! draw.png : 400, 400, 100, 40 : 1]]
+                    //!! draw.png : 400, 400, 100, 40 : 1]]
                 end
             end
         end

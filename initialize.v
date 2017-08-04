@@ -1,6 +1,6 @@
 {red, green, blue} = 3'b111;
 [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
-    board{{x}}{{y}} <= 2'b00;
+    board{{x}}{{y}} <= 3'b000;
 }]]
 player_state = 1'b0;
 game_state = 3'b0;

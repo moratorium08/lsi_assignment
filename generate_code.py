@@ -2,6 +2,7 @@
 import re
 import image_generator as ig
 import time
+import sys
 
 
 def data2str(data):
@@ -187,5 +188,7 @@ def parse(s):
 if __name__ == '__main__':
     s = open("note.v", "r").read()
     result = parse(s)
-    result += "\n// [Compile] " + str(time.time())
+    t = "\n// [Compile] " + str(time.time())
+    result += t
+    sys.stderr.write(t+ "\n")
     print(result)
