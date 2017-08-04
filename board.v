@@ -25,12 +25,12 @@ if (board{{x}}{{y}} == 2'b01) begin
 end
 }]]
 // batsu no hyouji
-[[for x, y, X, c1, Y, c2 in eval("[(str(x), str(y), 50 + 100 * x, 190 + 100 * (x + y), 50 + 100 * y, x * 100 - y*100) for x in range(3) for y in range(3)]") {
+[[for x, y, X, c1, Y, c2 in eval("[(str(x), str(y), 45 + 100 * x, 185 + 100 * (x + y), 45, x * 100 - y*100) for x in range(3) for y in range(3)]") {
 if (board{{y}}{{x}} == 2'b10) begin
-    if((col + row ) < ({{c1}} + 10'd10) && (col + row) > {{c1}} && col > ({{X}} + 10'd5)  && col < ({{X}} + 10'd80)) begin
+    if((col + row ) < ({{c1}} + 10'd10) && (col + row) > {{c1}} && col > ({{X}} + 10'd5)  && col < ({{X}} + 10'd90)) begin
         {red, green, blue} = 3'b000;
     end
-    if((row - col + {{c2}}) < 10 && (col - row + {{c2}}) > 10 && col > ({{X}} + 10'd5) && col < ({{X}} + 10'd80)) begin
+    if((row - col + {{c2}}) < 10 && (col - row + {{c2}}) > 10 && col > ({{X}} + 10'd5) && col < ({{X}} + 10'd90)) begin
         {red, green, blue} = 3'b000;
     end
 end

@@ -8,9 +8,9 @@
         end
     end
 }]]
-[[!! vs_human.png : 25, 100, 512, 100 : 4]]
-[[!! vs_random_ai.png : 25, 200, 740, 100 : 4]]
-[[!! vs_my_ai.png : 25, 300, 480, 100 : 4]]
+[[!! vs_human.png : 25, 100, 128, 25 : 4]]
+[[!! vs_random_ai.png : 25, 200, 185, 25 : 4]]
+[[!! vs_my_ai.png : 25, 300, 120, 25 : 4]]
 if(!board_fe20) begin
     if (select_button != 2'b10) begin
         select_button = select_button + 1;

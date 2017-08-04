@@ -39,18 +39,15 @@ def translate(filename, definition=default_rect, rate=4):
     # さらに二値になるように変換
     im = Image.open(filename)
     im = im.convert("L")
-    width = definition.width // rate
-    height = definition.height // rate
-
-    im = im.resize((width, height), Image.LANCZOS)
+    im = im.resize((definition.width, definition.height), Image.LANCZOS)
     imgArray = numpy.asarray(im).T
     # im.show()
 
     x = definition.x
     y = definition.y
     result = ""
-    for px in range(width):
-        for py in range(height):
+    for px in range(definition.width):
+        for py in range(definition.height):
             if imgArray[px, py] < 100:
                 col = int2verilogInt(x + rate * px, 10)
                 row = int2verilogInt(y + rate * py, 10)
