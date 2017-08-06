@@ -17,6 +17,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     reg late;
     reg late2;
     reg search;
+    reg red_flag;
 
     reg [8:0] put[0:9];
     reg [8:0] draw_put[0:9];
@@ -83,7 +84,11 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                 end else if (game_state == 3'b100) begin
                     //!! draw.png : 400, 400, 100, 40 : 1]]
                 end
+                if (red_flag ==1'b1) begin
+                    red <= 1;
+                end
             end
         end
+
     end
 endmodule

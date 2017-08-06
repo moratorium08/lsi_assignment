@@ -36,7 +36,7 @@ end else begin
             my_turn <= 5'd2;
             current_winner <= 9'd8;
             next_put <= 9'd9;
-            winner <= 9'd8;
+            winner <= 9'd0;
 
             put[0] <= 9;
             put[1] <= 9;
@@ -62,6 +62,19 @@ end else begin
         end else begin
             [[import my_ai.v]]
             search <= 1'b1;
+        end
+        if (cnt > 8 || cnt < 0) begin
+            blue <= 1;
+        end
+        if (!(my_turn == 5'd2 || my_turn == 5'd1)) begin
+            green <= 1;
+        end
+        if(!(current_winner == 8 || current_winner <= 3) ) begin
+            blue <= 1;
+            green <= 1;
+        end
+        if(see > 8 || see < 0) begin
+            red <= 1;
         end
     end
 end

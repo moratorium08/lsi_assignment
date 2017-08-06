@@ -10,7 +10,6 @@ random_number <= 4'b0;
 late <= 1'b0;
 select_button <= 3'b0;
 
-cnt <= 9'b0;
 see <= 9'b0;
 my_turn <= 9'd2;
 cnt <= 9'b0;
@@ -19,6 +18,8 @@ next_put <= 9'd9;
 winner <= 9'd0;
 late2 <= 1'b0;
 search <= 1'b0;
+
+red_flag <= 1'b0;
 
 put[0] <= 9'd9;
 put[1] <= 9'd9;
