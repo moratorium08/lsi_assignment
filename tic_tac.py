@@ -124,7 +124,6 @@ class VerilogSimulator:
                     for i in range(9):
                         if self.board[i] == 0:
                             self.next_put = i
-                            break
                 else:
                     self.next_put = self.put[0]
             else:

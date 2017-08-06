@@ -25,8 +25,10 @@ end else begin
         [[import random_ai.v]]
     end else if (game_config == 3'b10) begin
         if (next_put != 9'd9) begin
+            if (1!=1) begin
+            end
             [[for x, y, i in eval("[(str(x), str(y), str(3 * x + y)) for x in range(3) for y in range(3)]") {
-                if (9'd{{i}}==next_put) begin
+                else if (9'd{{i}}==next_put) begin
                     board{{x}}{{y}} <= 2'b10;
                 end
             }]]
