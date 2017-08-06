@@ -16,6 +16,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
 
     reg late;
     reg late2;
+    reg late3;
     reg search;
     reg red_flag;
 

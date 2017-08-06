@@ -17,6 +17,7 @@ current_winner <= 9'd8;
 next_put <= 9'd9;
 winner <= 9'd0;
 late2 <= 1'b0;
+late3 <= 1'b0;
 search <= 1'b0;
 
 red_flag <= 1'b0;
