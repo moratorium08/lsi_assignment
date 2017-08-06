@@ -10,7 +10,7 @@ board[3] = 2
 board[5] = 1
 board[7] = 1
 """
-player = 2
+player = 1
 
 def print_field():
     p = ""
@@ -119,7 +119,6 @@ class VerilogSimulator:
                 self.current_winner = self.my_turn ^ 0b11
             self.put[self.cnt] = self.draw_put[self.cnt]
             self.draw_put[self.cnt] = 9
-
             if self.cnt == 0:
                 if self.put[0] == 9:
                     for i in range(9):

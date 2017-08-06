@@ -12,7 +12,7 @@ import sys
 
 template = """
 if(row >= %s && row < %s && col >= %s && col < %s) begin
-    {red, green, blue} = 3'b000;
+    {red, green, blue} <= 3'b000;
 end
 """
 

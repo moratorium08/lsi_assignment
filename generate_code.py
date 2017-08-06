@@ -106,6 +106,7 @@ def deal_for(snipet, variables):
                 elif val2 in variables:
                     val2 = variables[val2]
                 else:
+                    print(snipet)
                     raise Exception("NO such variable %s" % val2)
                 snipet = snipet.replace(closure, data2str(val1 + val2))
                 continue

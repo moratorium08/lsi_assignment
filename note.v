@@ -16,13 +16,14 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
 
     reg late;
     reg late2;
+    reg search;
 
-    reg [9:0] put[9];
-    reg [9:0] draw_put[9];
+    reg [8:0] put[0:9];
+    reg [8:0] draw_put[0:9];
 
     reg [8:0] cnt;
     reg [8:0] see;
-    reg [4:0] my_turn;
+    reg [8:0] my_turn;
     reg [8:0] current_winner;
     reg [8:0] next_put;
     reg [8:0] winner;
@@ -31,6 +32,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     reg [2:0] board00, board01, board02;
     reg [2:0] board10, board11, board12;
     reg [2:0] board20, board21, board22;
+
     reg complete_button_action;
 
     [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
@@ -55,7 +57,6 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     always @(posedge CLK or negedge RST) begin
         if(!RST) begin
             [[import initialize.v]]
-            late2 <= 0;
         end
         else begin
             {red, green, blue} = 3'b111;
@@ -64,32 +65,20 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                 random_number <= 4'b0;
             end
 
-            if (game_state == 2'b0) begin
+            if (game_state == 3'b0) begin
                 [[import select_view.v]]
             end
             else begin
                 [[import board.v]]
-                if (game_state == 2'b1) begin
-                    complete_button_action <= 1'b0;
+                if (game_state == 3'b1) begin
                     [[import button_action.v]]
-                    if(complete_button_action == 1'b0) begin
+                    if (search == 1'b0) begin
                         [[import judge_board.v]]
                     end
-                    else begin
-                        [[for x, y in eval("[(str(x), str(y)) for x in range(3) for y in range(3)]") {
-                            if ((board{{x}}{{y}} != 2'b00) &&
-                               (board{{x}}{{y}} != 2'b01) &&
-                               (board{{x}}{{y}} != 2'b10) &&
-                               (board{{x}}{{y}} != 2'b11)) begin
-                               board{{x}}{{y}} = 2'b00;
-                               player_state = player_state ^ 1'b1;
-                            end
-                        }]]
-                    end
                     //!! shinchoku.png : 100, 100, 200, 200 : 1]]
-                end else if (game_state == 2'b10) begin
+                end else if (game_state == 3'b10) begin
                     //!! win.png : 400, 400, 100, 40 : 1]]
-                end else if (game_state == 2'b11) begin
+                end else if (game_state == 3'b11) begin
                     //!! lose.png : 400, 400, 100, 40 : 1]]
                 end else if (game_state == 3'b100) begin
                     //!! draw.png : 400, 400, 100, 40 : 1]]
