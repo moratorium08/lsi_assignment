@@ -4,7 +4,7 @@
         if(col >= {{baseimgx}} && col < {{baseimgx + sizex}}
             && row >= {{basey}}
             && row < ({{basey}} + 100)) begin
-                {red, green, blue} = 3'b001;
+                {red, green, blue} <= 3'b001;
         end
     end
 }]]
@@ -13,12 +13,12 @@
 //!! vs_my_ai.png : 25, 300, 120, 25 : 4]]
 if(!board_fe20) begin
     if (select_button != 2'b10) begin
-        select_button = select_button + 1;
+        select_button <= select_button + 1;
     end
 end
 else if(!board_fe00) begin
     if (select_button != 2'b0) begin
-        select_button = select_button - 1;
+        select_button <= select_button - 1;
     end
 end
 else if(!board_fe10) begin

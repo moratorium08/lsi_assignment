@@ -63,6 +63,8 @@ def check(l):
         return l[4]
     return 0 if 0 in l else 3
 
+turn = 0
+
 class VerilogSimulator:
     def __init__(self, board):
         self.board = board[:]
@@ -74,7 +76,10 @@ class VerilogSimulator:
         self.cnt = 0
         self.current_winner = 8
 
+        self.ignore = 0
+
     def debug(self):
+        print("turn:", self.ignore)
         print("cnt:",self.cnt)
         print("current_winner:", self.current_winner)
         print("my turn:", self.my_turn)
@@ -104,10 +109,14 @@ class VerilogSimulator:
         self.current_winner = 8
 
     def loop(self):
-        # self.debug()
+        self.ignore += 1
+        #if turn > 2 and self.ignore > 1500:
+            #self.debug()
+        print(self.draw_put, self.put)
         w = check(self.board)
         if self.current_winner == 8 and w != 0:
             self.current_winner = w
+            self.put[self.cnt] = 9
             self.cnt -= 1
             self.my_turn ^= 0b11
         elif self.current_winner == self.my_turn and self.cnt == 0:
@@ -128,6 +137,7 @@ class VerilogSimulator:
                     self.next_put = self.put[0]
             else:
                 self.see = self.put[self.cnt - 1]
+                self.put[self.cnt] = 9
                 self.cnt -= 1
                 self.my_turn ^= 0b11
         else:
@@ -149,6 +159,7 @@ class VerilogSimulator:
                 self.board[self.put[self.cnt]] = 0
                 if self.current_winner == self.my_turn:
                     self.put[self.cnt] = 9
+                    self.draw_put[self.cnt] = 9
                     self.see = self.put[self.cnt - 1]
                     self.cnt -= 1
                     self.my_turn ^= 0b11
@@ -195,7 +206,7 @@ while True:
         else:
             print("Retry")
     else:
-        #v, _ = dfs(board[:], player)
+        v, _ = dfs(board[:], player)
         vs = VerilogSimulator(board[:])
         v = vs.search()
         #print(v)
@@ -208,4 +219,4 @@ while True:
         else:
             print("Winner player %d" % w)
         break
-
+    turn += 1

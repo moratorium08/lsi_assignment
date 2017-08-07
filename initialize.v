@@ -20,8 +20,27 @@ late2 <= 1'b0;
 late3 <= 1'b0;
 search <= 1'b0;
 
+centerx <= 400;
+centery <= 700;
+timing <= 0;
+
+
+hanabi_state <= 0;
+
 red_flag <= 1'b0;
 
+[[for i, x in eval("[(str(x), x) for x in range(20)]") {
+    pointersx[{{i}}] = 400;
+}]]
+[[for i, x in eval("[(str(x), x) for x in range(20)]") {
+    pointersy[{{i}}] = 200;
+}]]
+[[for i, x in eval("[(str(x), int(5 * cos(3.141592 * 2 / 20 * x))) for x in range(20)]") {
+    velocitysx[{{i}}] = {{x}};
+}]]
+[[for i, x in eval("[(str(x), int(5 * sin(3.141592 * 2 / 20 * x))) for x in range(20)]") {
+    velocitysy[{{i}}] = {{x}};
+}]]
 put[0] <= 9'd9;
 put[1] <= 9'd9;
 put[2] <= 9'd9;

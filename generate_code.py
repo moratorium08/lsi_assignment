@@ -4,6 +4,7 @@ import image_generator as ig
 import time
 import sys
 
+from math import cos, sin
 
 def data2str(data):
     if isinstance(data, int):
@@ -45,11 +46,9 @@ def deal_for(snipet, variables):
         cs = cs_str.replace(" ","").split(",")
         if len(cs) == 0:
             raise Exception("parse error! Illegal for expression")
-        if isinstance(cs[0], int):
+        try:
             cs = map(int, cs)
-        elif isinstance(cs[0], bool):
-            cs = map(int, cs)
-        else:
+        except:
             print(cs)
             raise Exception("parse error! Illegal for expression")
     else:
@@ -72,7 +71,10 @@ def deal_for(snipet, variables):
     for local in cs:
         snipet = snipet_origin
         try:
-            local_variables = dict(zip(vs, list(local)))
+            if isinstance(local, int):
+                local_variables = dict({vs[0]: local})
+            else:
+                local_variables = dict(zip(vs, list(local)))
         except:
             print(snipet)
             print(local)
@@ -197,7 +199,11 @@ def parse(s):
 
 
 if __name__ == '__main__':
-    s = open("note.v", "r").read()
+
+    if len(sys.argv) == 2:
+        s = open(sys.argv[1], "r").read()
+    else:
+        s = open("note.v", "r").read()
     result = parse(s)
     t = "\n// [Compile] " + str(time.time())
     result += t

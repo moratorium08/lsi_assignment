@@ -19,6 +19,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     reg late3;
     reg search;
     reg red_flag;
+    reg hanabi_state;
 
     reg [8:0] put[0:9];
     reg [8:0] draw_put[0:9];
@@ -34,6 +35,16 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     reg [2:0] board00, board01, board02;
     reg [2:0] board10, board11, board12;
     reg [2:0] board20, board21, board22;
+
+    reg [31:0] centerx;
+    reg [31:0] centery;
+    reg [31:0] timing;
+    reg [31:0] timing2;
+
+    reg [31:0] pointersx[19:0];
+    reg [31:0] pointersy[19:0];
+    reg [31:0] velocitysx[19:0];
+    reg [31:0] velocitysy[19:0];
 
     reg complete_button_action;
 
@@ -61,7 +72,41 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
             [[import initialize.v]]
         end
         else begin
-            {red, green, blue} = 3'b111;
+            {red, green, blue} <= 3'b111;
+            timing <= timing + 1;
+            if (timing == 400000) begin
+                timing <= 0;
+                if (hanabi_state == 1'b1) begin
+                    if (timing2 == 10) begin
+                        [[for i, x in eval("[(str(x), x) for x in range(20)]") {
+                            velocitysy[{{i}}] <= velocitysy[{{i}}] + 1;
+                        }]]
+                        [[for i, x in eval("[(str(x), x) for x in range(20)]") {
+                            pointersx[{{i}}] <= pointersx[{{i}}] + velocitysx[{{i}}];
+                        }]]
+                        [[for i, x in eval("[(str(x), x) for x in range(20)]") {
+                            pointersy[{{i}}] <= pointersy[{{i}}] + velocitysy[{{i}}];
+                        }]]
+                    end
+                end
+                else begin
+                    //centerx <= centerx + 1;
+                    centery <= centery - 10;
+                    if (centery < 200) begin
+                        hanabi_state <= 1;
+                    end
+                end
+            end
+            if (((col - centerx) * (col - centerx) +
+                (row - centery) * (row - centery)) < 400) begin
+                {red, green, blue} <= 3'b100;
+            end
+            [[for i, x in eval("[(str(x), x) for x in range(20)]") {
+                if (((col - pointersx[{{i}}]) * (col - pointersx[{{i}}]) +
+                    (row - pointersy[{{i}}]) * (row - pointersy[{{i}}])) < 100) begin
+                    {red, green, blue} <= 3'b100;
+                end
+            }]]
             random_number <= random_number + 4'b1;
             if (random_number > 4'd8) begin
                 random_number <= 4'b0;
@@ -90,6 +135,5 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                 end
             end
         end
-
     end
 endmodule
