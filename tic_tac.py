@@ -163,13 +163,6 @@ class VerilogSimulator:
 
 
 def dfs(l, turn):
-    flag = True
-    for x in l:
-        if x != 0:
-            flag = False
-    if flag:
-        return (4, -1)
-
     w = check(l)
     if w != 0:
         return (-1, w)

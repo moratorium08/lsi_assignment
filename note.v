@@ -77,13 +77,13 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                     if (search == 1'b0) begin
                         [[import judge_board.v]]
                     end
-                    //!! shinchoku.png : 100, 100, 200, 200 : 1]]
+                    [[!! shinchoku.png : 100, 100, 200, 200 : 1]]
                 end else if (game_state == 3'b10) begin
-                    //!! win.png : 400, 400, 100, 40 : 1]]
+                    [[!! win.png : 400, 400, 100, 40 : 1]]
                 end else if (game_state == 3'b11) begin
-                    //!! lose.png : 400, 400, 100, 40 : 1]]
+                    [[!! lose.png : 400, 400, 100, 40 : 1]]
                 end else if (game_state == 3'b100) begin
-                    //!! draw.png : 400, 400, 100, 40 : 1]]
+                    [[!! draw.png : 400, 400, 100, 40 : 1]]
                 end
                 if (red_flag ==1'b1) begin
                     red <= 1;
