@@ -4,7 +4,7 @@
     `define CENTER{{x}}{{y}}y {{p + basepoint}}
 }]]
 module display(row, col, red, green, blue, board_but00, board_but01, board_but02, board_but10, board_but11,board_but12,board_but20,board_but21,board_but22,vnotactive, CLK, RST);
-    input [31:0] row, col;
+    input [9:0] row, col;
     input CLK, RST, board_but00, board_but01, board_but02, board_but10, board_but11,board_but12,board_but20,board_but21,board_but22, vnotactive;
     output red, green, blue;
     reg red, green, blue;
@@ -12,7 +12,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     reg [2:0] game_state;
     reg [2:0] game_config;
     reg [3:0] random_number;
-    reg [2:0] select_button;
+    reg [1:0] select_button;
 
     reg late;
     reg late2;
@@ -20,20 +20,23 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
     reg search;
     reg red_flag;
 
-    reg [8:0] put[0:9];
-    reg [8:0] draw_put[0:9];
+    reg [8:0] put[0:15];
+    reg [8:0] draw_put[0:15];
 
-    reg [8:0] cnt;
-    reg [8:0] see;
-    reg [8:0] my_turn;
-    reg [8:0] current_winner;
-    reg [8:0] next_put;
-    reg [8:0] winner;
+    reg [3:0] cnt;
+    reg [3:0] see;
+    reg [2:0] my_turn;
+    reg [3:0] current_winner;
+    reg [3:0] next_put;
+    reg [3:0] winner;
 
+    reg [1:0] board00, board01, board02;
+    reg [1:0] board10, board11, board12;
+    reg [1:0] board20, board21, board22;
 
-    reg [2:0] board00, board01, board02;
-    reg [2:0] board10, board11, board12;
-    reg [2:0] board20, board21, board22;
+    wire board_fe00, board_fe01, board_fe02;
+    wire board_fe10, board_fe11, board_fe12;
+    wire board_fe20, board_fe21, board_fe22;
 
     reg complete_button_action;
 
@@ -53,7 +56,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                 board_but_d3{{x}}{{y}} <= board_but_d2{{x}}{{y}};
             end
         end
-        assign board_fe{{x}}{{y}} <= ~(~board_but_d2{{x}}{{y}} & board_but_d3{{x}}{{y}});
+        assign board_fe{{x}}{{y}} = ~(~board_but_d2{{x}}{{y}} & board_but_d3{{x}}{{y}});
     }]]
 
     always @(posedge CLK or negedge RST) begin
@@ -77,7 +80,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                     if (search == 1'b0) begin
                         [[import judge_board.v]]
                     end
-                    [[!! shinchoku.png : 100, 100, 200, 200 : 1]]
+                    //!! shinchoku.png : 100, 100, 200, 200 : 1]]
                 end else if (game_state == 3'b10) begin
                     [[!! win.png : 400, 400, 100, 40 : 1]]
                 end else if (game_state == 3'b11) begin

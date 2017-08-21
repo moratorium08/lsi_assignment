@@ -3,7 +3,6 @@ if (late3 == 1'b1) begin
     if (cnt == 9'd0) begin
         if (put[9'd0] == 9'd9) begin
             if (1 !=1) begin
-                red_flag <= 1'b1;
             end
             [[for x, y, i in eval("[(str(x), str(y), str(3*x + y)) for x in range(3) for y in range(3)]") {
                 else if (board{{x}}{{y}} == 3'b0) begin
@@ -88,8 +87,8 @@ end else begin
                             board{{x}}{{y}} <= 3'd1;
                         end
                         put[cnt] <= 9'd{{i}};
-                        my_turn <= my_turn ^ 9'b11;
-                        cnt <= cnt + 9'd1;
+                        my_turn <= my_turn ^ 3'b11;
+                        cnt <= cnt + 4'd1;
                         see <= 9'd0;
                     end
                 }]]
@@ -105,7 +104,7 @@ end else begin
                 if (current_winner == my_turn) begin
                     put[cnt] <= 9'd9;
                     draw_put[cnt] <= 9'd9;
-                    see <= put[cnt - 9'd1];
+                    see <= put[cnt - 4'd1];
                     cnt <= cnt - 9'd1;
                     my_turn <= my_turn ^ 9'b11;
                 end else if(current_winner == 9'd3) begin
