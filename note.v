@@ -53,7 +53,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
                 board_but_d3{{x}}{{y}} <= board_but_d2{{x}}{{y}};
             end
         end
-        assign board_fe{{x}}{{y}} = ~(~board_but_d2{{x}}{{y}} & board_but_d3{{x}}{{y}});
+        assign board_fe{{x}}{{y}} <= ~(~board_but_d2{{x}}{{y}} & board_but_d3{{x}}{{y}});
     }]]
 
     always @(posedge CLK or negedge RST) begin
@@ -61,7 +61,7 @@ module display(row, col, red, green, blue, board_but00, board_but01, board_but02
             [[import initialize.v]]
         end
         else begin
-            {red, green, blue} = 3'b111;
+            {red, green, blue} <= 3'b111;
             random_number <= random_number + 4'b1;
             if (random_number > 4'd8) begin
                 random_number <= 4'b0;
